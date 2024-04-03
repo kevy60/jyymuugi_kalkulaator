@@ -1,7 +1,14 @@
+// Näitab toodet ja hinda
+
+quantity = "68" 
+price = "9.50"
+console.log(price, quantity);
+
 // See siis arvutab tellimuse hinna
 function calculateOrderValue(quantity, price, stateCode) {
     const salesTaxRates = {
-        "AL": 0.04, // Alabama
+        "FL": 0.06, // Florida
+        "AR": 0.056, // Arizona
     };
 
     // Kontrollib siis kas osariigi kood on defineeritud
@@ -16,4 +23,5 @@ function calculateOrderValue(quantity, price, stateCode) {
     }
 }
 
-console.log(calculateOrderValue(5, 10, "AL"));
+console.log(calculateOrderValue(5, 10, "AR"));
+
