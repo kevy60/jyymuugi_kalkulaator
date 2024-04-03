@@ -9,6 +9,9 @@ function calculateOrderValue(quantity, price, stateCode) {
     const salesTaxRates = {
         "FL": 0.06, // Florida
         "AR": 0.056, // Arizona
+        "TX": 0.0625, //Texas
+        "CA": 0.0825, //California
+        "UT": 0.0685, //Utah
     };
 
     // Kontrollib siis kas osariigi kood on defineeritud
@@ -22,6 +25,9 @@ function calculateOrderValue(quantity, price, stateCode) {
         return "Osariigi kood ei ole määratud.";
     }
 }
+
+
+
 
 console.log(calculateOrderValue(5, 10, "AR"));
 
