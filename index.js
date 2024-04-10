@@ -1,12 +1,10 @@
+const readline = require('readline');
 // Näitab toodet ja hinda
-let quantity = "68";
-let price = "9.50";
-console.log("Initial price: ", price, "Quantity: ", quantity);
-
-let orderValue; // Declare orderValue globally
+let quantity = 50;
+let price = 9.50;
 
 // See siis arvutab tellimuse hinna
-function calculateOrderValue(quantity, price, stateCode) {
+function calculateOrderValue(quantity, price, stateCode, discountCode, discountLevel) {
     const salesTaxRates = {
         "FL": 0.06, // Florida
         "AR": 0.056, // Arizona
@@ -15,28 +13,56 @@ function calculateOrderValue(quantity, price, stateCode) {
         "UT": 0.0685, //Utah
     };
 
-    // Kontrollib siis kas osariigi kood on defineeritud
-    if (salesTaxRates.hasOwnProperty(stateCode)) {
-        // Arvutab tellimuse hinna ilma müügimaksuta
-        orderValue = quantity * price;
-        let salesTax = orderValue * salesTaxRates[stateCode];
+    const discountCodes = {
+        "DISCOUNT10": 0.10,
+        "DISCOUNT20": 0.20,
+    };
+
+    if (salesTaxRates.hasOwnProperty(stateCode.toUpperCase())) {
+        let orderValue = quantity * price;
+        let salesTax = orderValue * salesTaxRates[stateCode.toUpperCase()];
         orderValue += salesTax;
 
-        // Kindel allahindlus
-        const discountPercentance = 20;
-        const discountPrice = orderValue - (orderValue * (discountPercentance / 100));
+        let discountPrice = orderValue;
+
+        if (discountCodes.hasOwnProperty(discountCode)) {
+            discountPrice -= discountPrice * discountCodes[discountCode];
+        }
+
+        if (discountLevel == 'low'){
+            discountPrice = discountPrice * 0.9;
+        } else if (discountLevel == 'medium'){
+            discountPrice = discountPrice * 0.8;
+        } else if (discountLevel == 'high'){
+            discountPrice = discountPrice * 0.7;
+        } else {
+            console.log('Invalid discount level');
+            return orderValue;
+        }
 
         return { orderValue, discountPrice };
     } else {
-        return "Osariigi kood ei ole määratud.";
+        return "State code is not defined.";
     }
 }
 
-let result = calculateOrderValue(5, 10, "AR");
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
-if (typeof result === "object") {
-    console.log("Order Value: ", result.orderValue);
-    console.log("Discount Price: ", result.discountPrice);
-} else {
-    console.log(result);
-}
+console.log("Initial price: ", price, "Quantity: ", quantity);
+
+rl.question('Please enter your discount code(DISCOUNT10 or DISCOUNT20): ', (discountCode) => {
+    discountCode = discountCode.toUpperCase();
+    let result = calculateOrderValue(quantity, price, "AR", discountCode, "low");
+
+    if (typeof result === "object") {
+        console.log("Order Value: ", result.orderValue);
+        console.log("Discount Price: ", result.discountPrice);
+    } else {
+        console.log(result);
+    }
+
+    rl.close();
+});
